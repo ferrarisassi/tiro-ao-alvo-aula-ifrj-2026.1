@@ -15,12 +15,12 @@ public class Target : MonoBehaviour
     
     private Vector3 startPosition;
     private float direction = 1f;
-    private PlayerShooter playerShooter;
+    private FPSAimController playerShooter; // Changed from PlayerShooter to FPSAimController
     
     void Start()
     {
         startPosition = transform.position;
-        playerShooter = FindObjectOfType<PlayerShooter>();
+        playerShooter = FindObjectOfType<FPSAimController>(); // Changed to FPSAimController
     }
     
     void Update()
@@ -66,8 +66,13 @@ public class Target : MonoBehaviour
                 // Destroy bullet
                 Destroy(other.gameObject);
                 
-                // Respawn or destroy
+                // Respawn target
                 StartCoroutine(RespawnTarget());
+            }
+            else
+            {
+                // Destroy bullet even if target not destroyed
+                Destroy(other.gameObject);
             }
         }
     }
