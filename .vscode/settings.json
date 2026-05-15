@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "TiroAoAlvo.sln"
+    "dotnet.defaultSolution": "tiro-ao-alvo-aula-ifrj-2026.1.sln"
 }
