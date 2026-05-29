@@ -2,49 +2,55 @@ using UnityEngine;
 
 public class Target : MonoBehaviour
 {
-    [Header("Target Settings")]
-    public int health = 1;
-    public int pointsValue = 10;
-    public float moveSpeed = 3f;
-    public float respawnTime = 2f;
+    [HideInInspector]
+    public TargetSpawner.SpawnPoint spawnPoint;
     
-    [Header("Movement Type")]
-    public bool moveHorizontal = true;
+    [HideInInspector]
+    public bool moveHorizontal = false;
+    [HideInInspector]
     public bool moveVertical = false;
+    [HideInInspector]
+    public float moveSpeed = 3f;
+    [HideInInspector]
     public float moveRange = 5f;
+    [HideInInspector]
+    public int health = 1;
+    [HideInInspector]
+    public int pointsValue = 10;
     
     private Vector3 startPosition;
-    private float direction = 1f;
-    private FPSAimController playerShooter; // Changed from PlayerShooter to FPSAimController
+    private float directionX = 1f;
+    private float directionY = 1f;
+    private FPSAimController playerShooter;
     
     void Start()
     {
         startPosition = transform.position;
-        playerShooter = FindObjectOfType<FPSAimController>(); // Changed to FPSAimController
+        playerShooter = FindObjectOfType<FPSAimController>();
     }
     
     void Update()
     {
-        // Move target
-        Vector3 newPosition = transform.position;
+        // Movimento
+        Vector3 newPos = transform.position;
         
         if (moveHorizontal)
         {
-            newPosition.x += direction * moveSpeed * Time.deltaTime;
-            if (Mathf.Abs(newPosition.x - startPosition.x) >= moveRange)
-                direction *= -1;
+            newPos.x += directionX * moveSpeed * Time.deltaTime;
+            if (Mathf.Abs(newPos.x - startPosition.x) >= moveRange)
+                directionX *= -1;
         }
         
         if (moveVertical)
         {
-            newPosition.y += direction * moveSpeed * Time.deltaTime;
-            if (Mathf.Abs(newPosition.y - startPosition.y) >= moveRange)
-                direction *= -1;
+            newPos.y += directionY * moveSpeed * Time.deltaTime;
+            if (Mathf.Abs(newPos.y - startPosition.y) >= moveRange)
+                directionY *= -1;
         }
         
-        transform.position = newPosition;
+        transform.position = newPos;
         
-        // Optional: Rotate target
+        // Rotação
         transform.Rotate(Vector3.up, 180 * Time.deltaTime);
     }
     
@@ -56,34 +62,16 @@ public class Target : MonoBehaviour
             
             if (health <= 0)
             {
-                // Add score
                 if (playerShooter != null)
                     playerShooter.AddScore(pointsValue);
                 
-                // Play hit effect
-                Debug.Log("Target hit! +" + pointsValue + " points");
-                
-                // Destroy bullet
                 Destroy(other.gameObject);
-                
-                // Respawn target
-                StartCoroutine(RespawnTarget());
+                Destroy(gameObject);
             }
             else
             {
-                // Destroy bullet even if target not destroyed
                 Destroy(other.gameObject);
             }
         }
-    }
-    
-    System.Collections.IEnumerator RespawnTarget()
-    {
-        gameObject.SetActive(false);
-        yield return new WaitForSeconds(respawnTime);
-        
-        health = 1; // Reset health
-        transform.position = startPosition;
-        gameObject.SetActive(true);
     }
 }
